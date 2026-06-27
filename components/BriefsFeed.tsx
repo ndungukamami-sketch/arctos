@@ -19,10 +19,27 @@ function confClass(c: string): string {
 
 export default function BriefsFeed({ briefs }: { briefs: Brief[] }) {
   const [filter, setFilter] = useState("all");
-  const shown = briefs.filter((b) => filter === "all" || b.type === filter);
+  const [q, setQ] = useState("");
+  const query = q.trim().toLowerCase();
+  const shown = briefs.filter(
+    (b) =>
+      (filter === "all" || b.type === filter) &&
+      (query === "" || b.searchText.includes(query))
+  );
 
   return (
     <>
+      <div className="searchwrap">
+        <input
+          type="search"
+          className="search"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search reports by title, topic, or text"
+          aria-label="Search reports"
+        />
+      </div>
+
       <div className="filters">
         {FILTERS.map((f) => (
           <button
@@ -61,10 +78,13 @@ export default function BriefsFeed({ briefs }: { briefs: Brief[] }) {
           </Link>
         ))}
 
-        {filter === "briefing" && shown.length === 0 && (
+        {shown.length === 0 && (
           <div className="empty">
-            No briefings published yet. Briefings are produced before a scheduled
-            meeting; the first will appear here.
+            {query
+              ? `No reports match "${q.trim()}". Try a different term, or clear the search.`
+              : filter === "briefing"
+              ? "No briefings published yet. Briefings are produced before a scheduled meeting; the first will appear here."
+              : "No reports yet."}
           </div>
         )}
       </div>

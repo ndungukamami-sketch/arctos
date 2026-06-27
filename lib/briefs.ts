@@ -17,7 +17,19 @@ export type Brief = {
   emblem: string; // "scale" or "stack"
   featured: boolean;
   order: number;
+  searchText: string; // lowercased title, standfirst, kind, and body, for client search
 };
+
+// Reduce MDX body to plain lowercased text for substring search.
+function toPlainText(md: string): string {
+  return md
+    .replace(/```[\s\S]*?```/g, " ") // fenced code
+    .replace(/`([^`]*)`/g, "$1") // inline code
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1") // links to their text
+    .replace(/[#>*_~|]/g, " ") // markdown symbols and table pipes
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 export function getBriefSlugs(): string[] {
   if (!fs.existsSync(BRIEFS_DIR)) return [];
@@ -44,7 +56,18 @@ function readBrief(slug: string): { meta: Brief; content: string } {
     emblem: data.emblem ?? "scale",
     featured: Boolean(data.featured),
     order: Number(data.order ?? 99),
+    searchText: "",
   };
+  meta.searchText = [
+    meta.title,
+    meta.standfirst,
+    meta.kind,
+    meta.confidence,
+    meta.displayDate,
+    toPlainText(content),
+  ]
+    .join(" ")
+    .toLowerCase();
   return { meta, content };
 }
 

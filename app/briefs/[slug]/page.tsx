@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { getAllBriefs, getBrief, getBriefSlugs, confClass } from "@/lib/briefs";
+import ShareBar from "@/components/ShareBar";
 
 export function generateStaticParams() {
   return getAllBriefs().map((b) => ({ slug: b.slug }));
@@ -16,7 +17,24 @@ export function generateMetadata({
 }): Metadata {
   if (!getBriefSlugs().includes(params.slug)) return {};
   const { meta } = getBrief(params.slug);
-  return { title: meta.title, description: meta.standfirst };
+  const path = `/briefs/${params.slug}`;
+  return {
+    title: meta.title,
+    description: meta.standfirst,
+    alternates: { canonical: path },
+    openGraph: {
+      title: meta.title,
+      description: meta.standfirst,
+      url: path,
+      siteName: "Arctos",
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: meta.title,
+      description: meta.standfirst,
+    },
+  };
 }
 
 export default function BriefPage({ params }: { params: { slug: string } }) {
@@ -50,6 +68,10 @@ export default function BriefPage({ params }: { params: { slug: string } }) {
           options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
         />
       </article>
+      <ShareBar
+        title={meta.title}
+        url={`https://arctos.africa/briefs/${params.slug}`}
+      />
     </div>
   );
 }

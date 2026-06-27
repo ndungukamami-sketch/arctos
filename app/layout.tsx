@@ -17,6 +17,14 @@ export const metadata: Metadata = {
     url: "https://arctos.africa",
     siteName: "Arctos",
     type: "website",
+    images: ["/og.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Arctos: Foreign Policy Intelligence",
+    description:
+      "Referenced analysis of the agreements that bind Kenya. Every claim cited.",
+    images: ["/og.png"],
   },
 };
 
