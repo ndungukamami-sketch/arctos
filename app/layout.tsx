@@ -3,6 +3,7 @@ import "./globals.css";
 import Ticker from "@/components/Ticker";
 import Masthead from "@/components/Masthead";
 import Footer from "@/components/Footer";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://arctos.africa"),
@@ -40,6 +41,7 @@ export default function RootLayout({
         <Masthead />
         {children}
         <Footer />
+        <Analytics />
       </body>
     </html>
   );
