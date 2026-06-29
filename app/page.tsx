@@ -7,8 +7,22 @@ export default function Home() {
   const briefs = getAllBriefs();
   const featured = briefs.find((b) => b.featured) ?? briefs[0];
 
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsMediaOrganization",
+    name: "Arctos",
+    url: "https://arctos.africa",
+    description:
+      "Referenced analysis of the agreements that bind Kenya. Every claim cited.",
+    logo: { "@type": "ImageObject", url: "https://arctos.africa/og.png" },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+      />
       {/* Cover, split hero */}
       <section className="cover">
         <div className="wrap">

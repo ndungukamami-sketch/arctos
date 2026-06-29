@@ -41,8 +41,36 @@ export default function BriefPage({ params }: { params: { slug: string } }) {
   if (!getBriefSlugs().includes(params.slug)) notFound();
   const { meta, content } = getBrief(params.slug);
 
+  const url = `https://arctos.africa/briefs/${params.slug}`;
+  const iso = /^\d{4}-\d{2}$/.test(meta.date)
+    ? `${meta.date}-01`
+    : new Date().toISOString().slice(0, 10);
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: meta.title,
+    description: meta.standfirst,
+    datePublished: iso,
+    dateModified: iso,
+    url,
+    mainEntityOfPage: url,
+    articleSection: meta.kind,
+    author: { "@type": "Organization", name: "Arctos", url: "https://arctos.africa" },
+    publisher: {
+      "@type": "Organization",
+      name: "Arctos",
+      url: "https://arctos.africa",
+      logo: { "@type": "ImageObject", url: "https://arctos.africa/og.png" },
+    },
+  };
+
   return (
-    <div className="narrow">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="narrow">
       <p style={{ padding: "18px 0 0" }}>
         <Link className="backlink" href="/#briefs">
           &larr; All briefs
@@ -72,6 +100,7 @@ export default function BriefPage({ params }: { params: { slug: string } }) {
         title={meta.title}
         url={`https://arctos.africa/briefs/${params.slug}`}
       />
-    </div>
+      </div>
+    </>
   );
 }
